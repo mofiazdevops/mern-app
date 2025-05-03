@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   frontend:
     build: ./frontend
@@ -5,6 +7,8 @@ services:
       - "5173:5173"
     networks:
       - mern
+    restart: unless-stopped
+
   backend:
     build: ./backend
     ports: 
@@ -12,16 +16,21 @@ services:
     networks:
       - mern
     depends_on:
-      - mongo
-  mongo:
-    image: mongo:latest
+      - mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/employee
+
+  mongodb:
+    image: mongo:8.0
+    container_name: mongodb
     ports:
       - "27017:27017"
     networks:
       - mern
     volumes:
       - mongo-data:/data/db
-      
+    restart: unless-stopped
 
 networks:
   mern:
